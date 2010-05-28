@@ -10,7 +10,7 @@ module EnomAPI
     end
     def search
       q = yield SearchQuery.new
-      send_request(q.to_query)
+      send_request(q.to_post_data)
     end
     def method_missing(meth, options = {}, &block)
       send_request(options.merge(:command => meth.to_s, :responseType => 'xml'))
