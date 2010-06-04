@@ -1,12 +1,14 @@
+require 'net/https'
+
 module EnomAPI
-  class Client
+  class Interface
     LIVE_SERVER = 'https://reseller.enom.com/interface.asp'
     TEST_SERVER = 'https://resellertest.enom.com/interface.asp'
     VERSION = '0.0.1'
 
     def initialize(user, passwd, mode = :live)
       @user, @passwd = user, passwd
-      @uri = mode == :real ? URI.parse(LIVE_SERVER) : URI.parse(TEST_SERVER)
+      @uri = mode == :live ? URI.parse(LIVE_SERVER) : URI.parse(TEST_SERVER)
     end
     def search
       q = yield SearchQuery.new
@@ -20,6 +22,7 @@ module EnomAPI
         begin
           s_client = Net::HTTP.new(@uri.host, @uri.port)
           s_client.use_ssl = true
+          s_client.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
           @response = s_client.start do |https|
             @request = Net::HTTP::Post.new(@uri.path)
@@ -30,6 +33,12 @@ module EnomAPI
               "#{@request.send(:urlencode, k.to_s)}=#{@request.send(:urlencode, v.to_s)}" }.join("&")
 
             https.request(@request)
+          end
+
+          if @response.kind_of?(Net::HTTPSuccess)
+            @response.body
+          else
+            raise @response
           end
         rescue ::Timeout::Error => e
           if attempts == 1
