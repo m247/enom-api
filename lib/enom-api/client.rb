@@ -1,7 +1,11 @@
 module EnomAPI
   class Client
     def initialize(user, passwd, mode = :live)
+      @user, @mode = user, mode
       @conn = Interface.new(user, passwd, mode)
+    end
+    def inspect
+      "#<#{self.class} #{@user}@#{@mode}>"
     end
     def search
       @conn.search
