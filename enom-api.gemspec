@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Geoff Garside"]
-  s.date = %q{2010-05-28}
+  s.date = %q{2010-06-07}
   s.description = %q{Client for communicating with the eNom API}
   s.email = %q{geoff@geoffgarside.co.uk}
   s.extra_rdoc_files = [
@@ -26,6 +26,8 @@ Gem::Specification.new do |s|
      "enom-api.gemspec",
      "lib/enom-api.rb",
      "lib/enom-api/client.rb",
+     "lib/enom-api/interface.rb",
+     "lib/enom-api/registrant.rb",
      "lib/enom-api/search_query.rb",
      "test/helper.rb",
      "test/test_enom-api.rb"
