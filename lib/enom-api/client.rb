@@ -347,7 +347,7 @@ module EnomAPI
           raise ResponseError.new(errs)
         end
 
-        unless xml.find('//Done').first.content.strip == 'True'
+        unless xml.find('//Done').first.content.strip =~ /true/i
           raise IncompleteResponseError.new(xml)
         end
 
