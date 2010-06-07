@@ -97,14 +97,20 @@ module EnomAPI
     def get_expired_domains
       xml = send_recv(:GetExpiredDomains)
 
-      domains = []
+      domains = {:expired => [], :extended_rgp => [], :rgp => []}
       xml.DomainDetail do
-        domains << {
+        case xml.status
+        when /Expired/i
+          domains[:expired]
+        when /Extended RGP/i
+          domains[:extended_rgp]
+        when /RGP/i
+          domains[:rgp]
+        end << {
           :name => xml.DomainName,
           :id => xml.DomainNameID,
-          :status => xml.status,
-          :expired => Time.parse(xml.send('expiration-date')),
-          :lockstatus => xml.lockstatus
+          :date => Time.parse(xml.send('expiration-date')),
+          :locked => xml.lockstatus =~ /Locked/i
         }
       end
       domains
