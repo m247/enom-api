@@ -7,8 +7,28 @@ module EnomAPI
     def inspect
       "#<#{self.class} #{@user}@#{@mode}>"
     end
-    def search
-      @conn.search
+    def search(&block)
+      response = @conn.search(&block)
+      xml = XML::Parser.string(response).parse
+
+      o = Array.new
+      d = Demolisher.demolish(xml)
+      d.send("interface-response") do
+        d.DomainSearch do
+          d.Domains do
+            d.Domain do
+              o << {
+                :id => d.DomainNameID,
+                :name => "#{d.SLD}.#{d.TLD}",
+                :auto_renew => d.AutoRenew?,
+                :expires => Time.parse(d.ExpDate),
+                :status => d.DomainRegistrationStatus,
+                :nameservers => d.NameServers.split(",") }
+            end
+          end
+        end
+      end
+      o
     end
 
     def check(*names)
