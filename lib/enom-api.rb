@@ -6,4 +6,17 @@ module EnomAPI
   autoload :Interface, File.dirname(__FILE__) + '/enom-api/interface.rb'
   autoload :Registrant, File.dirname(__FILE__) + '/enom-api/registrant.rb'
   autoload :SearchQuery, File.dirname(__FILE__) + '/enom-api/search_query.rb'
+
+  class ResponseError < RuntimeError
+    attr_reader :messages
+    def initialize(error_messages)
+      @messages = error_messages
+    end
+  end
+  class IncompleteResponseError < RuntimeError
+    attr_reader :xml
+    def initialize(xml)
+      @xml = xml
+    end
+  end
 end
