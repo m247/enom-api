@@ -337,8 +337,8 @@ module EnomAPI
         s, t = domain.split('.', 2)
         {:SLD => s, :TLD => t}
       end
-      def send_recv(method, post_data, &block)
-        yield post_data if block_given?
+      def send_recv(method, post_data = {}, &block)
+        yield post_data if block
         response = @conn.send(method, post_data)
         xml = XML::Parser.string(response).parse
 
