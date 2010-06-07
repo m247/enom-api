@@ -124,7 +124,7 @@ module EnomAPI
 
       tlds = []
       xml.tldlist.tld do
-        xml.tld
+        xml.tld do
           tlds << xml.strip unless xml.nil? || xml.strip == ''
         end
       end
@@ -240,7 +240,7 @@ module EnomAPI
         xml.OrderDetail do
           info[:details] << {
             :product_type => xml.ProductType,
-            :description => xml.Description
+            :description => xml.Description,
             :status => xml.Status,
             :quantity => xml.Quantity.to_i 
           }
@@ -340,7 +340,7 @@ module EnomAPI
       def send_recv(method, post_data, &block)
         yield post_data if block_given?
         response = @conn.send(method, post_data)
-        xml = XML::Parser.string(resp).parse
+        xml = XML::Parser.string(response).parse
 
         if (err_count = xml.find('//ErrCount').first.content.strip.to_i) > 0
           errs = (1..err_count).map { |i| xml.find("//Err#{i}").first.content.strip }
