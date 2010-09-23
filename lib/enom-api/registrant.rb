@@ -1,5 +1,8 @@
 module EnomAPI
+  # Represents a registrant or other type of Contact in the eNom API
   class Registrant
+    # @param [Demolisher, String] xmldoc Demolisher or XML String of registrant information
+    # @return [Registrant] Registrant composed from the information in the xmldoc
     def self.from_xml(xmldoc)
       xml = xmldoc.kind_of?(Demolisher) ? xmldoc : Demolisher.demolish(xmldoc)
 
@@ -19,11 +22,18 @@ module EnomAPI
     attr_accessor :firstname, :lastname, :phone, :phone_extension, :fax, :email,
       :organisation, :job_title, :address, :city, :state, :postal_code, :country
 
+    # @param [String] first Registrant first name
+    # @param [String] last Registrant last name
+    # @yield block to configure the registrant, any method on Registrant may be called.
     def initialize(first, last, &blk)
       @firstname, @lastname = first, last
       instance_eval(&blk) if blk
     end
 
+    # Converts the object into a form suitable for POSTing to the eNom API
+    #
+    # @param [String] prefix String to prepend to key names
+    # @return [Hash] Hash of data for the registrant
     def to_post_data(prefix=nil)
       data = {
         "#{prefix}FirstName" => firstname,
