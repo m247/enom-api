@@ -11,6 +11,16 @@ module EnomAPI
       "#<#{self.class} #{@user}@#{@mode}>"
     end
 
+    # Perform a search.
+    #
+    # The returned array contains hashes with the following keys
+    # - (String) +:id+ -- Domain ID within the eNom registry
+    # - (String) +:name+ -- Domain name
+    # - (BOOL) +:auto_renew+ -- Whether auto-renew is set on the domain
+    # - (Time) +:expires+ -- Expiration date of the domain
+    # - (String) +:status+ -- Registration status of the domain
+    # - (Array) +:nameservers+ -- Nameserver names
+    #
     # @yield [q] block to build up search query
     # @yieldparam [SearchQuery] q SearchQuery instance
     # @return [Array] Array of hashes of search results
