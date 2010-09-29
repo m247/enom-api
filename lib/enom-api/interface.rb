@@ -47,7 +47,7 @@ module EnomAPI
 
           @response = s_client.start do |https|
             @request = Net::HTTP::Post.new(@uri.path)
-            @request.add_field('User-Agent', "Ruby Enom API Client v#{VERSION}")
+            @request.add_field('User-Agent', "Ruby eNom API Client v#{VERSION}")
             @request.content_type = 'application/x-www-form-urlencoded'
 
             @request.body = data.merge(:uid => @user, :pw => @passwd).map { |k,v|
