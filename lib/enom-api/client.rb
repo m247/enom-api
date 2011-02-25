@@ -1,3 +1,6 @@
+require 'time'
+require 'demolisher'
+
 module EnomAPI
   class Client
     # @param [String] user eNom Account ID
@@ -168,12 +171,13 @@ module EnomAPI
     # @return [Hash] information for the domain
     def get_domain_info(domain)
       xml = send_recv(:GetDomainInfo, split_domain(domain))
+      xml = xml.GetDomainInfo
 
       nameservers = []
-      xml.services.entry do
-        next unless xml['name'] == 'dnsserver'
-        xml.configuration.dns do
-          nameservers << xml.strip
+      xml.services.entry do |entry,_|
+        next unless entry['name'] == 'dnsserver'
+        entry.configuration.dns do |dns,_|
+          nameservers << dns.to_s
         end
       end
 
@@ -666,15 +670,15 @@ module EnomAPI
       # @raise [IncompleteResponseError] if the response does not indicate Done
       def send_recv(method, post_data = {}, &block)
         yield post_data if block
-        response = @conn.send(method, post_data)
-        xml = XML::Parser.string(response).parse
+        @response = @conn.send(method, post_data)
+        xml = Nokogiri::XML.parse(@response)
 
-        if (err_count = xml.find('//ErrCount').first.content.strip.to_i) > 0
-          errs = (1..err_count).map { |i| xml.find("//Err#{i}").first.content.strip }
+        if (err_count = xml.xpath('//ErrCount').first.content.strip.to_i) > 0
+          errs = (1..err_count).map { |i| xml.xpath("//Err#{i}").first.content.strip }
           raise ResponseError.new(errs)
         end
 
-        unless xml.find('//Done').first.content.strip =~ /true/i
+        unless xml.xpath('//Done').first.content.strip =~ /true/i
           raise IncompleteResponseError.new(xml)
         end
 
