@@ -13,6 +13,7 @@ begin
     gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
     gem.add_development_dependency "yard", ">= 0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    gem.add_dependency "demolisher", ">= 0.6.0"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
