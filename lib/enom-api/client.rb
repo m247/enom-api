@@ -466,9 +466,9 @@ module EnomAPI
       xml = send_recv(:GetTLDList)
 
       tlds = []
-      xml.tldlist.tld do
-        xml.tld do
-          tlds << xml.strip unless xml.nil? || xml.strip == ''
+      xml.tldlist.tld do |tld,_|
+        tld.tld do
+          tlds << tld.to_s unless tld.to_s == ''
         end
       end
       tlds
