@@ -1,6 +1,6 @@
-= enom-api
+= eNom API Client
 
-Description goes here.
+Provides a Ruby client for the eNom Reseller API.
 
 == Note on Patches/Pull Requests
  
