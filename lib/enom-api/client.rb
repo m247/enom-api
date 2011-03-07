@@ -10,7 +10,7 @@ module EnomAPI
       @user, @mode = user, mode
       @conn = Interface.new(user, passwd, mode)
     end
-    def inspect
+    def inspect # :nodoc:
       "#<#{self.class} #{@user}@#{@mode}>"
     end
 
