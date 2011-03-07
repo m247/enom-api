@@ -81,7 +81,7 @@ module EnomAPI
       xml = send_recv(:CheckNSStatus, :CheckNSName => name)
 
       return false if xml.RRPCode != '200'
-      { :name => xml.name, :ipaddress => xml.ipaddress }
+      { :name => xml.CheckNsStatus.name, :ipaddress => xml.CheckNsStatus.ipaddress }
     end
 
     # Delete a registered nameserver from eNom
