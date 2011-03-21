@@ -530,6 +530,19 @@ module EnomAPI
       out
     end
 
+    def get_contacts(domain)
+      xml = send_recv(:GetContacts, split_domain(domain))
+      xml = xml.GetContacts
+
+      out = {}
+      out[:registrant] = Registrant.from_xml(xml.Registrant)
+      out[:aux_billing] = Registrant.from_xml(xml.AuxBilling)
+      out[:tech] = Registrant.from_xml(xml.Tech)
+      out[:admin] = Registrant.from_xml(xml.Admin)
+      out[:billing] = Registrant.from_xml(xml.Billing)
+      out
+    end
+
     # Push a domain to another eNom account.
     #
     # This is much like a domain transfer except it is wholly within the scope
