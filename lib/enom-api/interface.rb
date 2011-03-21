@@ -3,22 +3,15 @@ require 'net/https'
 module EnomAPI
   # Interface proxy for the eNom Reseller API
   class Interface
-
-    # URL of the live eNom Reseller API
-    LIVE_SERVER = 'https://reseller.enom.com/interface.asp'
-
-    # URL of the test eNom Reseller API
-    TEST_SERVER = 'https://resellertest.enom.com/interface.asp'
-
     # Version of the Interface class, sent with the HTTP requests
-    VERSION = '0.0.1'
+    VERSION = '0.1.0'
 
     # @param [String] user eNom Account Login ID
     # @param [String] passwd eNom Account Password
-    # @param [Symbol] mode Interface type, `:live` or `:test`
-    def initialize(user, passwd, mode = :live)
+    # @param [String] server Server to connect to
+    def initialize(user, passwd, server = 'reseller.enom.com')
       @user, @passwd = user, passwd
-      @uri = mode == :live ? URI.parse(LIVE_SERVER) : URI.parse(TEST_SERVER)
+      @uri = URI.parse('https://%s/interface.asp' % server)
     end
 
     # @yield [q] Search query block

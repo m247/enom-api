@@ -2,13 +2,14 @@ require 'time'
 require 'demolisher'
 
 module EnomAPI
+  # Client
   class Client
     # @param [String] user eNom Account ID
     # @param [String] passwd eNom Account Password
-    # @param [Symbol] mode Type of session, `:live` or `:test`
-    def initialize(user, passwd, mode = :live)
+    # @param [String] server Server to connect to. Use 'resellertest.enom.com' for test.
+    def initialize(user, passwd, server = 'reseller.enom.com')
       @user, @mode = user, mode
-      @conn = Interface.new(user, passwd, mode)
+      @conn = Interface.new(user, passwd, server)
     end
     def inspect # :nodoc:
       "#<#{self.class} #{@user}@#{@mode}>"
