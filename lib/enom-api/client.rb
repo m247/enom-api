@@ -68,9 +68,9 @@ module EnomAPI
     # @raise [ArgumentError] if more than 30 names are provided
     def check(*names)
       raise ArgumentError, "maximum number of names is 30" if names.size > 30
-      xml = send_recv(:Check, :DomainNames => names.join(','))
+      xml = send_recv(:Check, :DomainList => names.join(','))
 
-      info = (0..xml.DomainCount.to_i).map do |i|
+      info = (1..xml.DomainCount.to_i).map do |i|
         [xml.send("Domain#{i}"), xml.send("RRPCode#{i}") == '210']
       end.flatten
 
