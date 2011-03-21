@@ -7,21 +7,35 @@ module EnomAPI
     # @return [Registrant] Registrant composed from the information in the xmldoc
     def self.from_xml(xmldoc)
       @xml = xml = xmldoc.kind_of?(Demolisher::Node) ? xmldoc : Demolisher.demolish(xmldoc.to_s)
+      r = new("", "")
 
-      r = new(xml.FName, xml.LName)
-      r.organisation    = xml.Organization
-      r.city            = xml.City
-      r.state           = xml.StateProvince
-      r.postal_code     = xml.PostalCode
-      r.phone           = xml.Phone
-      r.phone_extension = xml.PhoneExt
-      r.fax             = xml.Fax
-      r.email           = xml.EmailAddress
-      r.address         = [xml.Address1, xml.Address2].delete_if{|a| a.nil? || a.to_s == ""}.join("\n")
+      mapping = if xml.FName
+        from_xml_mapping_one
+      elsif xml.RegistrantFirstName
+        from_xml_mapping_two('Registrant')
+      elsif xml.AuxBillingFirstName
+        from_xml_mapping_two('AuxBilling')
+      elsif xml.TechFirstName
+        from_xml_mapping_two('Tech')
+      elsif xml.AdminFirstName
+        from_xml_mapping_two('Admin')
+      elsif xml.BillingFirstName
+        from_xml_mapping_two('Billing')
+      end
+
+      mapping.each do |meth, el|
+        case el
+        when Array
+          r.send(:"#{meth}=", el.map { |n| xml.send(n).to_s }.delete_if { |n| n.nil? || n == "" }.join("\n"))
+        else
+          r.send(:"#{meth}=", xml.send(el).to_s)
+        end
+      end
+
       r
     end
 
-    attr_accessor :firstname, :lastname, :phone, :phone_extension, :fax, :email,
+    attr_accessor :id, :firstname, :lastname, :phone, :phone_extension, :fax, :email,
       :organisation, :job_title, :address, :city, :state, :postal_code, :country
 
     # @param [String] first Registrant first name
@@ -57,5 +71,21 @@ module EnomAPI
       end
       data
     end
+    private
+      def self.from_xml_mapping_one
+        { :firstname => :FName, :lastname => :LName,
+          :organisation => :Organization, :job_title => :JobTitle,
+          :city => :City, :state => :StateProvince, :postal_code => :PostalCode, :country => :Country,
+          :phone => :Phone, :phone_extension => :PhoneExt, :fax => :Fax, :email => :EmailAddress,
+          :address => [:Address1, :Address2] }
+      end
+      def self.from_xml_mapping_two(p = nil)
+        { :id => "#{p}PartyID",
+          :firstname => "#{p}FirstName", :lastname => "#{p}LastName",
+          :organisation => "#{p}OrganizationName", :job_title => "#{p}JobTitle",
+          :city => "#{p}City", :state => "#{p}StateProvince", :postal_code => "#{p}PostalCode", :country => "#{p}Country",
+          :phone => "#{p}Phone", :phone_extension => "#{p}PhoneExt", :fax => "#{p}Fax", :email => "#{p}EmailAddress",
+          :address => ["#{p}Address1", "#{p}Address2"] }
+      end
   end
 end
