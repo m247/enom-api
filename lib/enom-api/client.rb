@@ -354,9 +354,10 @@ module EnomAPI
     # Get detailed information about an order
     #
     # The returned hash contains the following keys
-    # - (BOOL) +:result+ --           Order exists
+    # - (Boolean) +:result+ --        Order exists
     # - (Float) +:amount+ --          Billed amount
     # - (Array) +:details+ --         Details
+    # - (String) +:status+ --         Order Status
     #
     # The +:details+ result key array contains hashes with the following keys
     # - (String) +:product_type+ --   Order detail item type
@@ -374,6 +375,7 @@ module EnomAPI
       xml.Order do
         info[:result] = xml.Result?
         info[:amount] = xml.OrderBillAmount
+        info[:status] = xml.OrderStatus       # If this doesn't exist, then its under OrderDetail
         info[:details] = []
 
         xml.OrderDetail do
