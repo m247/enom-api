@@ -267,13 +267,12 @@ module EnomAPI
     # @param [String] period Number of years to extend the registration by
     # @return [String] Order ID of the renewal
     # @return [false] the order did not succeed
-    def renew(domain, period = '2y')
+    def extend(domain, period = 1)
       xml = send_recv(:Extend, split_domain(domain).merge(:NumYears => period.to_i))
 
       return false if xml.RRPCode != '200'
       xml.OrderID
     end
-    alias :extend :renew
 
     # Get the list of extended attributes required by a TLD
     #
