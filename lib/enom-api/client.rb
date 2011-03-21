@@ -589,7 +589,7 @@ module EnomAPI
     # @param [Number] years Number of years to register the domain for
     # @return [String] response status
     def update_expired_domains(domain, years) # Like :extend, but for expired domains
-      xml = send_recv(:UpdateExpiredDomains, :DomainName => domain, :NumYears => years)
+      xml = send_recv(:UpdateExpiredDomains, :DomainName => domain, :NumYears => years.to_i)
       xml.Status.strip
     end
 
