@@ -34,19 +34,24 @@ module EnomAPI
       response = @conn.search(&block)
       xml = XML::Parser.string(response).parse
 
-      o = Array.new
+      o = Hash.new
       d = Demolisher.demolish(xml)
       d.send("interface-response") do
         d.DomainSearch do
+          o[:total_results] = d.TotalResults.to_s.to_i
+          o[:start_position] = d.StartPosition.to_s.to_i
+          o[:next_position]  = d.NextPosition.to_s.to_i
+
           d.Domains do
+            o[:results] = Array.new
             d.Domain do
-              o << {
+              o[:results] << {
                 :id => d.DomainNameID,
                 :name => "#{d.SLD}.#{d.TLD}",
                 :auto_renew => d.AutoRenew?,
                 :expires => Time.parse(d.ExpDate),
                 :status => d.DomainRegistrationStatus,
-                :nameservers => d.NameServers.split(",") }
+                :nameservers => (d.NameServers && d.NameServers.split(",")) }
             end
           end
         end
