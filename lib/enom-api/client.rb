@@ -537,8 +537,8 @@ module EnomAPI
       out = {}
       out[:registrant] = Registrant.from_xml(xml.Registrant)
       out[:aux_billing] = Registrant.from_xml(xml.AuxBilling)
-      out[:tech] = Registrant.from_xml(xml.Tech)
-      out[:admin] = Registrant.from_xml(xml.Admin)
+      out[:administrative] = Registrant.from_xml(xml.Admin)
+      out[:technical] = Registrant.from_xml(xml.Tech)
       out[:billing] = Registrant.from_xml(xml.Billing)
       out
     end
