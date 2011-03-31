@@ -388,6 +388,7 @@ module EnomAPI
           }
         end
       end
+      info
     end
 
     # Get list of the account orders
