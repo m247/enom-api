@@ -588,9 +588,12 @@ module EnomAPI
     # @param [String] domain Expired Domain name to register
     # @param [Number] years Number of years to register the domain for
     # @return [String] response status
-    def update_expired_domains(domain, years) # Like :extend, but for expired domains
+    def update_expired_domains(domain, years = 1) # Like :extend, but for expired domains
       xml = send_recv(:UpdateExpiredDomains, :DomainName => domain, :NumYears => years.to_i)
-      xml.Status.strip
+      xml = xml.ReactivateDomainName
+
+      return false unless xml.Status?
+      xml.OrderID
     end
 
     # Change the IP address of a registered name server.
