@@ -1,4 +1,5 @@
 require 'time'
+require 'date'
 require 'demolisher'
 
 module EnomAPI
@@ -160,10 +161,18 @@ module EnomAPI
     # Get the expiration date of a domain
     #
     # @param [String] domain Domain name
-    # @return [Time] expiration date of the domain
+    # @return [Time] expiration date of the domain in UTC
     def get_domain_exp(domain)
       xml = send_recv(:GetDomainExp, split_domain(domain))
-      Time.parse(xml.ExpirationDate.strip)
+      fmt = "%m/%d/%Y %l:%M:%S %p %z"
+      str = "%s %s" % [xml.ExpirationDate.strip, xml.TimeDifference.strip]
+
+      if Time.respond_to?(:strptime)
+        Time.strptime(str, fmt).utc
+      else
+        dt = DateTime.strptime(str, fmt).new_offset(0)  # UTC time
+        Time.utc(dt.year, dt.mon, dt.mday, dt.hour, dt.min, dt.sec + dt.sec_fraction)
+      end
     end
 
     # Get the domain information for a domain
