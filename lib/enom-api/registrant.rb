@@ -63,13 +63,14 @@ module EnomAPI
         "#{prefix}EmailAddress" => email,
         "#{prefix}Phone" => phone,
         "#{prefix}Fax" => fax }
-      data["#{prefix}Address1"], data["#{prefix}Address2"] = address.split("\n", 2)
+      data["#{prefix}Address1"], data["#{prefix}Address2"] = address && address.split("\n", 2)
 
       unless organisation.nil? || organisation == ''
         data["#{prefix}OrganizationName"] = organisation
         data["#{prefix}JobTitle"] = (job_title || "Domains Manager")
       end
-      data
+
+      data.reject { |_,v| v.nil? || v == '' }
     end
     private
       def self.from_xml_mapping_one
