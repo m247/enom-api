@@ -40,12 +40,13 @@ module EnomAPI
 
     # @param [String] first Registrant first name
     # @param [String] last Registrant last name
-    # @yield block to configure the registrant, any method on Registrant may be called.
+    # @yield registrant
+    # @yieldparam [Registrant] registrant receiver to configure
     def initialize(first, last, &blk)
       raise ArgumentError, "first and last may not be nil" unless first && last
 
       @firstname, @lastname = first, last
-      instance_eval(&blk) if blk
+      yield self if blk
     end
 
     # Converts the object into a form suitable for POSTing to the eNom API
