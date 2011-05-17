@@ -629,7 +629,7 @@ module EnomAPI
           d['NS1'] = ''
         else
           nameservers.each_with_index do |n,i|
-            d["NS#{i}"] = n
+            d["NS#{i+1}"] = n
           end
         end
       end
