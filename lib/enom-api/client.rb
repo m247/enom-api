@@ -52,7 +52,7 @@ module EnomAPI
                 :auto_renew => d.AutoRenew?,
                 :expires => Time.parse(d.ExpDate),
                 :status => d.DomainRegistrationStatus,
-                :nameservers => (d.NameServers && d.NameServers.split(",")) }
+                :nameservers => (d.NameServers && d.NameServers.to_s.split(",")) }
             end
           end
         end
