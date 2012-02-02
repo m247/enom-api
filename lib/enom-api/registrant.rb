@@ -6,6 +6,8 @@ module EnomAPI
     # @param [Demolisher, String] xmldoc Demolisher or XML String of registrant information
     # @return [Registrant] Registrant composed from the information in the xmldoc
     def self.from_xml(xmldoc)
+      return if xmldoc.nil?
+
       @xml = xml = xmldoc.kind_of?(Demolisher::Node) ? xmldoc : Demolisher.demolish(xmldoc.to_s)
       r = new("", "")
 
