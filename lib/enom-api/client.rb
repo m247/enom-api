@@ -613,7 +613,7 @@ module EnomAPI
     # @param [String] new_ip New IPv4 address of the nameserver
     # @return [Boolean] success or failure of the update
     def update_nameserver(nameserver, old_ip, new_ip)
-      xml = send_recv(:RegisterNameServer, :NS => nameserver, :OldIP => old_ip, :NewIP => new_ip)
+      xml = send_recv(:UpdateNameServer, :NS => nameserver, :OldIP => old_ip, :NewIP => new_ip)
       xml.NSSuccess?
     end
 
