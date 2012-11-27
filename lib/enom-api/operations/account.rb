@@ -41,7 +41,6 @@ module EnomAPI
         end
         tlds
       end
-
     end
   end
 end
