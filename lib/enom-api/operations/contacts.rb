@@ -62,6 +62,20 @@ module EnomAPI
         out[:billing]         = Registrant.from_xml(xml.Billing)
         out
       end
+
+      def contacts(domain, type, registrant)
+        contact_type, prefix = case type
+        when :registrant then ['REGISTRANT', 'Registrant']
+        when :auxbilling then ['AUXBILLING', 'AuxBilling']
+        when :admin      then ['ADMIN', 'Admin']
+        when :tech       then ['TECH', 'Tech']
+        end
+
+        data = registrant.to_post_data(prefix)
+        xml = send_recv(:Contacts, {:ContactType => contact_type}.merge(split_domain(domain)).merge(data))
+
+        xml.ErrCount.to_i == 0
+      end
     end
   end
 end
