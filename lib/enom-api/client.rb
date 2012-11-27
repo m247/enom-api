@@ -2,7 +2,7 @@ require 'time'
 require 'date'
 require 'demolisher'
 
-require File.expand_path('../operations/accounts', __FILE__)
+require File.expand_path('../operations/account', __FILE__)
 require File.expand_path('../operations/contacts', __FILE__)
 require File.expand_path('../operations/information', __FILE__)
 require File.expand_path('../operations/lock', __FILE__)
@@ -26,7 +26,7 @@ module EnomAPI
       "#<#{self.class} #{@user}@#{@server}>"
     end
 
-    include Operations::Accounts
+    include Operations::Account
     include Operations::Contacts
     include Operations::Information
     include Operations::Lock
