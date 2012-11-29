@@ -34,7 +34,8 @@ module EnomAPI
               :description => xml.Description,
               :status => xml.Status,
               :quantity => xml.Quantity.to_i,
-              :amount => xml.AmountPaid
+              :amount => xml.AmountPaid,
+              :order_status => xml.OrderStatus
             }
           end
         end
