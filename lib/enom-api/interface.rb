@@ -44,7 +44,7 @@ module EnomAPI
             @request.content_type = 'application/x-www-form-urlencoded'
 
             @request.body = data.merge(:uid => @user, :pw => @passwd).map { |k,v|
-              "#{@request.send(:urlencode, k.to_s)}=#{@request.send(:urlencode, v.to_s)}" }.join("&")
+              "#{URI.encode(k.to_s)}=#{URI.encode(v.to_s)}" }.join("&")
 
             https.request(@request)
           end
