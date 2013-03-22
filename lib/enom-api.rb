@@ -1,6 +1,8 @@
 require 'xml'
 require 'demolisher'
 
+require 'enom-api/version'
+
 module EnomAPI  # :nodoc:
   autoload :Client, File.dirname(__FILE__) + '/enom-api/client.rb'
   autoload :Interface, File.dirname(__FILE__) + '/enom-api/interface.rb'
