@@ -13,6 +13,7 @@ module EnomAPI  # :nodoc:
   class ResponseError < RuntimeError
     attr_reader :messages
     def initialize(error_messages)
+      super(Array(error_messages).join(", "))
       @messages = error_messages
     end
   end
