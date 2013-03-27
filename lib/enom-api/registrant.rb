@@ -51,6 +51,13 @@ module EnomAPI
       yield self if blk
     end
 
+    def ==(rhs)
+      [:id, :firstname, :lastname, :phone, :phone_extension, :fax, :email,
+      :organisation, :job_title, :address, :city, :state, :postal_code, :country].each do |field|
+        self.send(field) == rhs.send(field)
+      end
+    end
+
     # Converts the object into a form suitable for POSTing to the eNom API
     #
     # @param [String] prefix String to prepend to key names
