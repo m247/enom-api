@@ -22,7 +22,7 @@ module EnomAPI
           end
         end
 
-        { :expires => Time.parse(xml.status.expiration.strip),
+        { :expires => Time.strptime(xml.status.expiration.strip, "%m/%d/%Y %H:%M:%S %p"),
           :status => xml.status.registrationstatus.strip,
           :nameservers => nameservers }
       end
