@@ -99,6 +99,38 @@ module EnomAPI
       Hash[*info]
     end
 
+    def last_request
+      @conn.last_request
+    end
+    def last_response
+      @conn.last_response
+    end
+
+    # @note The string returned by this method has the password filtered
+    def last_http_request
+      req = last_request
+
+      out = "#{req.method} #{req.path}\n"
+      req.each_header do |header, value|
+        out += header.capitalize.gsub(/\-([a-z])/) { |m| "-#{m[1].upcase}" }
+        out += ": #{value}\n"
+      end
+
+      out += "\n"
+      out += req.body.sub(/pw=([^&(?!amp;)]+)/, 'pw=[filtered]')
+    end
+    def last_http_response
+      resp = last_response
+
+      out = "HTTP/#{resp.http_version} #{resp.code} #{resp.message}\n"
+      resp.each_header do |header, value|
+        out += header.capitalize.gsub(/\-([a-z])/) { |m| "-#{m[1].upcase}" }
+        out += ": #{value}\n"
+      end
+
+      out += "\n#{resp.body}"
+    end
+
     private
       # Split the domain into Top level and Domain components
       #
