@@ -6,6 +6,14 @@ module EnomAPI
     # Version of the Interface class, sent with the HTTP requests
     VERSION = '0.1.0'
 
+    @@user_agent = nil
+    def self.user_agent
+      @@user_agent ||= begin
+        engine  = defined?(RUBY_ENGINE)  ? RUBY_ENGINE.capitalize : "Ruby"
+        "EnomAPI::Client/#{EnomAPI::VERSION} (#{engine} #{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}/#{RUBY_PLATFORM})"
+      end
+    end
+
     # @param [String] user eNom Account Login ID
     # @param [String] passwd eNom Account Password
     # @param [String] server Server to connect to
@@ -28,6 +36,7 @@ module EnomAPI
     def method_missing(meth, options = {})
       send_request(options.merge(:command => meth.to_s, :responseType => 'xml'))
     end
+
     private
       # @param [Hash] data POST data to send to interface.asp
       # @param [Integer] attempts Number of attempts to try, default 3
@@ -40,11 +49,11 @@ module EnomAPI
 
           @response = s_client.start do |https|
             @request = Net::HTTP::Post.new(@uri.path)
-            @request.add_field('User-Agent', "Ruby eNom API Client v#{VERSION}")
-            @request.content_type = 'application/x-www-form-urlencoded'
+            @request['Accept'] = 'text/xml'
+            @request['User-Agent'] = self.class.user_agent
+            @request['Connection'] = 'close'
 
-            @request.body = data.merge(:uid => @user, :pw => @passwd).map { |k,v|
-              "#{URI.encode(k.to_s)}=#{URI.encode(v.to_s)}" }.join("&")
+            @request.set_form_data data.merge(:uid => @user, :pw => @passwd)
 
             https.request(@request)
           end
