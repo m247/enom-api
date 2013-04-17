@@ -30,6 +30,13 @@ module EnomAPI
       send_request(q.to_post_data)
     end
 
+    def last_request
+      @request
+    end
+    def last_response
+      @response
+    end
+
     # @param [Symbol] meth API command to execute
     # @param [Hash] options POST data to send to the API
     # @return [String] XML Body of the response
