@@ -3,6 +3,10 @@ require 'demolisher'
 
 require 'enom-api/version'
 
+if RUBY_VERSION < '1.9'
+  require 'enom-api/core-ext/time/strptime'
+end
+
 module EnomAPI  # :nodoc:
   autoload :Client, File.dirname(__FILE__) + '/enom-api/client.rb'
   autoload :Interface, File.dirname(__FILE__) + '/enom-api/interface.rb'
