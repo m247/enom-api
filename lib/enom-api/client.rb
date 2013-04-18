@@ -70,7 +70,7 @@ module EnomAPI
                 :id => d.DomainNameID,
                 :name => "#{d.SLD}.#{d.TLD}",
                 :auto_renew => d.AutoRenew?,
-                :expires => Time.parse(d.ExpDate),
+                :expires => Time.strptime(d.ExpDate, "%m/%d/%Y"),
                 :status => d.DomainRegistrationStatus,
                 :nameservers => (d.NameServers && d.NameServers.to_s.split(",")) }
             end
