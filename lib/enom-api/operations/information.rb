@@ -18,7 +18,8 @@ module EnomAPI
         xml.services.entry do |entry,_|
           next unless entry['name'] == 'dnsserver'
           entry.configuration.dns do |dns,_|
-            nameservers << dns.to_s
+            name = dns.to_s
+            nameservers << dns.to_s unless name == ""
           end
         end
 
