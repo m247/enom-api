@@ -30,7 +30,9 @@ module EnomAPI
         when Array
           r.send(:"#{meth}=", el.map { |n| xml.send(n).to_s }.delete_if { |n| n.nil? || n == "" }.join("\n"))
         else
-          r.send(:"#{meth}=", xml.send(el).to_s)
+          value = xml.send(el).to_s
+          value = nil if value == ""
+          r.send(:"#{meth}=", value)
         end
       end
 
