@@ -112,7 +112,7 @@ module EnomAPI
 
       out = "#{req.method} #{req.path}\n"
       req.each_header do |header, value|
-        out += header.capitalize.gsub(/\-([a-z])/) { |m| "-#{m[1].upcase}" }
+        out += header.capitalize.gsub(/\-([a-z])/) { |m| "-#{m[1].chr.upcase}" }
         out += ": #{value}\n"
       end
 
@@ -124,7 +124,7 @@ module EnomAPI
 
       out = "HTTP/#{resp.http_version} #{resp.code} #{resp.message}\n"
       resp.each_header do |header, value|
-        out += header.capitalize.gsub(/\-([a-z])/) { |m| "-#{m[1].upcase}" }
+        out += header.capitalize.gsub(/\-([a-z])/) { |m| "-#{m[1].chr.upcase}" }
         out += ": #{value}\n"
       end
 
