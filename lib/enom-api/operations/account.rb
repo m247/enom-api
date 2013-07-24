@@ -41,6 +41,41 @@ module EnomAPI
         end
         tlds
       end
+
+      # Get the list of TLDs available for the account and their info.
+      #
+      # Returns, for each TLD, a hash of the protocol used for the TLD
+      # along with boolean values for the following keys
+      #
+      # - (Boolean) +:lockable+ -- If domains on this TLD can be locked
+      # - (Boolean) +:realtime+ -- If domains on this TLD are handled in real time
+      # - (Boolean) +:transferable+ -- If domains on this TLD are transferable
+      # - (Boolean) +:auth_info+ -- If domains on this TLD have AUTH INFO
+      # - (Boolean) +:transfer_auto+ -- If domains on this TLD support auto verification on transfers
+      # - (Boolean) +:transfer_fax+ -- If domains on this TLD support fax verification on transfers
+      #
+      # @return [Hash<String,Hash>] array of TLDs available to the account
+      def get_tld_info
+        xml = send_recv(:TP_GetTLDInfo)
+
+        tlds = {}
+
+        xml.tldtable do
+          xml.tld do
+            tlds[xml.TLD.to_s] = {
+              :protocol      => xml.Protocol.to_s,
+              :lockable      => xml.AbleToLock?,
+              :realtime      => xml.RealTime?,
+              :transferable  => xml.Transferable?,
+              :auth_info     => xml.HasAuthInfo?,
+              :transfer_auto => xml.TransByAutoVeri?,
+              :transfer_fax  => xml.TransByFax?
+            }
+          end
+        end
+
+        tlds
+      end
     end
   end
 end
