@@ -76,6 +76,29 @@ module EnomAPI
 
         tlds
       end
+
+      def get_domain_pricing(options = {})
+        params = { :UseQtyEngine => options[:quantities] ? 1 : 0 }
+        params[:Years] = options[:years].to_i if options[:years].to_i > 0
+
+        xml = send_recv(:PE_GetDomainPricing, params)
+
+        results = {}
+        xml.pricestructure do
+          xml.product do
+            key = xml.tld.to_s
+            results[key] = {
+              :register => xml.registerprice.to_s,
+              :registerreg => xml.registerprice.to_s,
+              :renew => xml.renewprice.to_s,
+              :renewreseller => xml.resellerpricerenew.to_s,
+              :transfer => xml.transferprice.to_s,
+              :transferreseller => xml.resellerpricetran.to_s
+            }
+          end
+        end
+        results
+      end
     end
   end
 end
