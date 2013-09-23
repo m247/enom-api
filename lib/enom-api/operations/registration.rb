@@ -22,7 +22,7 @@ module EnomAPI
         opts[:NumYears] = options.delete(:period) if options.has_key?(:period)
 
         xml = send_recv(:Purchase, split_domain(domain).merge(opts)) do |d|
-          if nameservers.empty?
+          if nameservers.nil? || nameservers.empty?
             d['NS1'] = ''
           else
             nameservers.each_with_index do |n,i|
