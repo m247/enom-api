@@ -53,6 +53,38 @@ module EnomAPI
         xml = send_recv(:TP_CreateOrder, payload)
         return xml.transferorder.transferorderid.strip
       end
+
+      def get_transfer_order(transferorderid)
+        xml = send_recv(:TP_GetOrder, {:TransferOrderID => transferorderid})
+
+        data = {}
+        xml.transferorder do
+          data = {
+            :transferorderid => xml.transferorderid.to_i,
+            :orderdate => Time.strptime(xml.orderdate.strip, "%m/%d/%Y %H:%M:%S %p"),
+            :ordertypeid => xml.ordertypeid.to_i,
+            :ordertypedesc => xml.ordertypedesc.to_s,
+            :statusid => xml.statusid.to_i,
+            :statusdesc => xml.statusdesc.to_s,
+            :authamount => xml.authamount.to_f,
+            :version => xml.version.to_i,
+            :orders => []
+          }
+
+          xml.transferorderdetail do
+            data[:orders] << {
+              :transferorderdetailid => xml.transferorderdetailid.to_i,
+              :sld => xml.sld.to_s,
+              :tld => xml.tld.to_s,
+              :statusid => xml.statusid.to_i,
+              :statusdesc => xml.statusdesc.to_s,
+              :price => xml.price.to_f,
+              :usecontacts => xml.usecontacts?
+            }
+          end
+        end
+        data
+      end
     end
   end
 end
