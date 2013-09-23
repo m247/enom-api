@@ -104,7 +104,7 @@ module EnomAPI
           }
 
           xml.contacts do
-            [:registrant, :aux_billing, :billing, :admin, :tech] do |key|
+            [:registrant, :aux_billing, :billing, :admin, :tech].each do |key|
               data = case key
               when :registrant  then xml.Registrant
               when :aux_billing then xml.AuxBilling
