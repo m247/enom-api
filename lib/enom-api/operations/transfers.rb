@@ -85,6 +85,42 @@ module EnomAPI
         end
         data
       end
+      def get_transfer_order_detail(transferorderdetailid)
+        xml = send_recv(:TP_GetOrderDetail, {:TransferOrderDetailID => transferorderdetailid})
+
+        data = {}
+        xml.transferorderdetail do
+          data = {
+            :transferorderdetailid => xml.transferordedetailrid.to_i,
+            :sld => xml.sld.to_s,
+            :tld => xml.tld.to_s,
+            :lock => xml.lock?,
+            :renew => xml.renew?,
+            :statusid => xml.statusid.to_i,
+            :statusdesc => xml.statusdesc.to_s,
+            :price => xml.price.to_f,
+            :usecontacts => xml.usecontacts?,
+            :contacts => {}
+          }
+
+          xml.contacts do
+            [:registrant, :aux_billing, :billing, :admin, :tech] do |key|
+              data = case key
+              when :registrant  then xml.Registrant
+              when :aux_billing then xml.AuxBilling
+              when :billing     then xml.Billing
+              when :admin       then xml.Admin
+              when :tech        then xml.Tech
+              end
+
+              next if data == 'None'
+
+              data[:contacts][key] = Registrant.from_xml(data)
+            end
+          end
+        end
+        data
+      end
     end
   end
 end
