@@ -37,6 +37,22 @@ module EnomAPI
           return false
         end
       end
+
+      def transfer_domain(domain, authcode, new_registant = nil)
+        payload = split_domain(domain)
+        payload = { :SLD1 => payload[:SLD], :TLD1 => payload[:TLD],
+          :AuthInfo1 => authcode, :DomainCount => 1, :Lock => 1,
+          :OrderType => 'Autoverification', :Renew => 0,
+          :UseContacts => 1, :PreConfig => 0 }
+
+        if registrant
+          payload[:UseContacts] = 0
+          payload = payload.merge(registrant.to_post_data('Registrant'))
+        end
+
+        xml = send_recv(:TP_CreateOrder, payload)
+        return xml.transferorder.transferorderid.strip
+      end
     end
   end
 end
