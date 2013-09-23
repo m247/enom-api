@@ -15,6 +15,28 @@ module EnomAPI
           :AccountID => account_id, :PushContact => (push_contact ? 1 : 0)))
         xml.PushDomain?
       end
+
+      # @param [String] domain Domain to synchronise AUTH-INFO of
+      # @param [Hash] options
+      # @option options [Boolean] :email_epp Whether to email the new code to the registrant
+      # @return [Boolean] whether the sync was successful or not
+      def synch_auth_info(domain, options = {})
+        email_epp_option = options[:email_epp] || false
+        email_epp_option = email_epp_option ? 'True' : 'False'
+
+        begin
+          xml = send_recv(:SynchAuthInfo, split_domain(domain).merge(
+            :RunSynchAutoInfo => 'True', :EmailEPP => email_epp_option))
+
+          if options[:email_epp]
+            !(xml.EPPEmailMessage =~ /Email has been sent/i).nil?
+          else
+            return xml.InfoSynched?
+          end
+        rescue IncompleteResponseError
+          return false
+        end
+      end
     end
   end
 end
