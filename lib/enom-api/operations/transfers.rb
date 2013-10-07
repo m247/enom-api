@@ -45,9 +45,9 @@ module EnomAPI
           :OrderType => 'Autoverification', :Renew => 0,
           :UseContacts => 1, :PreConfig => 0 }
 
-        if registrant
+        if new_registant
           payload[:UseContacts] = 0
-          payload = payload.merge(registrant.to_post_data('Registrant'))
+          payload = payload.merge(new_registant.to_post_data('Registrant'))
         end
 
         xml = send_recv(:TP_CreateOrder, payload)
