@@ -23,10 +23,18 @@ module EnomAPI
           end
         end
 
-        strptime_format = "%m/%d/%Y %H:%M:%S %p"
-        strptime_format = "%m/%d/%Y" if domain =~ /\.eu$/
+        expires = nil
 
-        { :expires => Time.strptime(xml.status.expiration.strip, strptime_format),
+        ["%m/%d/%Y %H:%M:%S %p", "%m/%d/%Y"].each do |format|
+          begin
+            expires = Time.strptime(xml.status.expiration.strip, format)
+            break
+          rescue
+            next
+          end
+        end
+
+        { :expires => expires,
           :status => xml.status.registrationstatus.strip,
           :nameservers => nameservers }
       end
