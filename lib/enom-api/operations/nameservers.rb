@@ -3,14 +3,20 @@ module EnomAPI
     module Nameservers
       # Checks the status of a nameserver registered with eNom.
       #
+      # @note the +:ipaddresses+ return field has been added to cope with cases
+      #       where more than one IP address is returned from the API.
+      #
       # @param [String] name nameserver to check
-      # @return [Hash] the nameserver +:name+ and +:ipaddress+
+      # @return [Hash] the nameserver +:name+, +:ipaddress+, and +:ipaddresses+
       # @return [false] the nameserver is not registered with eNom
       def check_ns_status(name)
         xml = send_recv(:CheckNSStatus, :CheckNSName => name)
 
         return false if xml.RRPCode != '200'
-        { :name => xml.CheckNsStatus.name, :ipaddress => xml.CheckNsStatus.ipaddress }
+        
+        ips = xml.CheckNsStatus.ipaddress.to_s.split("\n")
+        
+        { :name => xml.CheckNsStatus.name, :ipaddress => ips[0], :ipaddresses => ips }
       end
 
       # Delete a registered nameserver from eNom
