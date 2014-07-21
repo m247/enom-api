@@ -7,7 +7,7 @@ module EnomAPI
       # @return [Boolean] locked state, true = locked
       def get_reg_lock(domain)
         xml = send_recv(:GetRegLock, split_domain(domain))
-        xml.RegLock?
+        xml.reg_lock.strip == "1"
       end
 
       # Sets the registrar lock on a domain name.
@@ -17,11 +17,19 @@ module EnomAPI
       # @return [false] if setting failed
       # @return [String] lock status
       def set_reg_lock(domain, new_state) # true to lock, false to unlock
-        xml = send_recv(:SetRegLock, split_domain(domain).merge(:UnlockRegistrar => (new_state ? '0' : '1')))
+        begin
+          xml = send_recv(:SetRegLock, split_domain(domain).merge(:UnlockRegistrar => (new_state ? '0' : '1')))
 
-        ret = xml.RegistrarLock.strip
-        return false if ret == 'Failed'
-        ret
+          ret = xml.reg_lock.strip
+          return false if ret == 'Failed'
+          ret
+        rescue ResponseError => e
+          if e.message =~ /domain is already unlocked/
+            return true
+          end
+          
+          raise
+        end
       end
     end
   end
