@@ -32,7 +32,9 @@ module EnomAPI
           end
 
           xml.send("rrp-info") do
-            upDate, crDate     = xml.send("updated-date"), xml.send("created-date")
+            upDate = xml.send("updated-date") rescue nil
+            crDate = xml.send("created-date") rescue nil
+
             out[:updated_date] = Time.parse(upDate) unless upDate.nil?
             out[:created_date] = Time.parse(crDate) unless crDate.nil?
             out[:expiry_date]  = Time.parse(xml.send("registration-expiration-date"))
