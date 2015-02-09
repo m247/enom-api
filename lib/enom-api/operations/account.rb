@@ -99,6 +99,24 @@ module EnomAPI
         end
         results
       end
+
+      # Get the current account balance.
+      #
+      # Returns a hash of the following keys +:balance+ and +:available+. Per the
+      # eNom Support Center FAQ the Available Balance is the current amount
+      # available for your immediate use for registrations, transfers, renewals
+      # and any other purchases. Once orders have become successful the difference
+      # will be reflected in the Account Balance.
+      #
+      # @return [Hash<Symbol,Float>]
+      def get_balance
+        xml = send_recv(:GetBalance)
+
+        return {
+          :balance   => xml.Balance.to_f,
+          :available => xml.AvailableBalance.to_f,
+        }
+      end
     end
   end
 end
