@@ -113,8 +113,8 @@ module EnomAPI
         xml = send_recv(:GetBalance)
 
         return {
-          :balance   => xml.Balance.to_f,
-          :available => xml.AvailableBalance.to_f,
+          :balance   => xml.Balance.to_s.gsub(',', '').to_f,
+          :available => xml.AvailableBalance.to_s.gsub(',', '').to_f,
         }
       end
     end
