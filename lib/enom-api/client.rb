@@ -99,6 +99,55 @@ module EnomAPI
       Hash[*info]
     end
 
+    class CheckResult
+      AVAILABLE_CODE = '210'
+
+      def initialize(name, code, extra = {})
+        @name = name
+        @code = code
+        @extra = extra
+      end
+
+      def available?
+        @code == AVAILABLE_CODE
+      end
+
+      def unavailable?
+        !available?
+      end
+
+      def premium?
+        @extra[:is_premium] == 'true'
+      end
+
+      def premium_price
+        return nil unless premium?
+        @extra[:premium_price].to_f
+      end
+
+      def premium_above_threshold?
+        return false unless premium?
+        @extra[:premium_above_threshold] == 'true'
+      end
+    end
+
+    def check_premium(*names)
+      fail ArgumentError, 'maximum number of names is 30' if names.size > 30
+      xml = send_recv(:Check, :DomainList => names.join(','))
+
+      info = (1..xml.DomainCount.to_i).map do |i|
+        CheckResult.new(
+          xml.send("Domain#{i}"),
+          xml.send("RRPCode#{i}"),
+          :is_premium              => xml.send("IsPremiumName#{i}"),
+          :premium_price           => xml.send("PremiumPrice#{i}"),
+          :premium_above_threshold => xml.send("PremiumAboveThresholdPrice#{i}"))
+      end
+
+      return info.first if info.size == 1
+      info
+    end
+
     def last_request
       @conn.last_request
     end
