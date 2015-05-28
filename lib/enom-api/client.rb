@@ -102,6 +102,8 @@ module EnomAPI
     class CheckResult
       AVAILABLE_CODE = '210'
 
+      attr_reader :name
+
       def initialize(name, code, extra = {})
         @name = name
         @code = code
