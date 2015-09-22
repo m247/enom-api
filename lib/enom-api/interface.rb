@@ -68,7 +68,7 @@ module EnomAPI
           if @response.kind_of?(Net::HTTPSuccess)
             @response.body
           else
-            raise @response
+            fail Net::HTTPBadResponse, @response
           end
         rescue ::Timeout::Error => e
           if attempts == 1
