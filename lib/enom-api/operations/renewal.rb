@@ -7,13 +7,24 @@ module EnomAPI
       # @return [Time] expiration date of the domain in UTC
       def get_domain_exp(domain)
         xml = send_recv(:GetDomainExp, split_domain(domain))
-        fmt = "%m/%d/%Y %l:%M:%S %p %z"
+        fmt1 = "%m/%d/%Y %l:%M:%S %p %z"
+        fmt2 = "%m/%d/%Y %z"
         str = "%s %s" % [xml.ExpirationDate.strip, xml.TimeDifference.strip]
 
         if Time.respond_to?(:strptime)
-          Time.strptime(str, fmt).utc
+          begin
+            Time.strptime(str, fmt1).utc
+          rescue ArgumentError
+            Time.strptime(str, fmt2).utc
+          end
         else
-          dt = DateTime.strptime(str, fmt).new_offset(0)  # UTC time
+          dt = begin
+            DateTime.strptime(str, fmt1)
+          rescue ArgumentError
+            DateTime.strptime(str, fmt2)
+          end
+
+          dt = dt.new_offset(0)  # UTC time
           Time.utc(dt.year, dt.mon, dt.mday, dt.hour, dt.min, dt.sec + dt.sec_fraction)
         end
       end
