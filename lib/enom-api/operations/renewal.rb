@@ -67,10 +67,11 @@ module EnomAPI
 
       # @param [String] domain Domain name to renew
       # @param [String] period Number of years to extend the registration by
+      # @param [Hash] options Hash of extra options to be sent with the Extend command.
       # @return [String] Order ID of the renewal
       # @return [false] the order did not succeed
-      def extend(domain, period = 1)
-        xml = send_recv(:Extend, split_domain(domain).merge(:NumYears => period.to_i))
+      def extend(domain, period = 1, options = {})
+        xml = send_recv(:Extend, options.merge(split_domain(domain)).merge(:NumYears => period.to_i))
 
         return false if xml.RRPCode != '200'
         xml.OrderID
@@ -103,9 +104,10 @@ module EnomAPI
       #
       # @param [String] domain Expired Domain name to register
       # @param [Number] years Number of years to register the domain for
+      # @param [Hash] options Hash of extra options to send with the UpdateExpiredDomains command.
       # @return [String] response status
-      def update_expired_domains(domain, years = 1) # Like :extend, but for expired domains
-        xml = send_recv(:UpdateExpiredDomains, :DomainName => domain, :NumYears => years.to_i)
+      def update_expired_domains(domain, years = 1, options = {}) # Like :extend, but for expired domains
+        xml = send_recv(:UpdateExpiredDomains, options.merge(:DomainName => domain, :NumYears => years.to_i))
         xml = xml.ReactivateDomainName
 
         return false unless xml.Status?
